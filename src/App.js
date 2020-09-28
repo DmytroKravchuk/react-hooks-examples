@@ -1,46 +1,19 @@
 import React, {useState, useEffect} from 'react';
+import Main from './Main';
+import Alert from './Alert';
 
+export const AlertContext = React.createContext();
 function App() {
-  const [type, setType] = useState('users');
-  const [data, setData] = useState([]);
-  const [pos, setPos] = useState({
-    x:0, y:0
-  });
-
-  useEffect(() => {
-    fetch(`https://jsonplaceholder.typicode.com/${type}/1`)
-    .then(response => response.json())
-    .then(json => setData(json))
-
-    return () => {
-      console.log('clean type');
-    }
-  },[type])
-
-  const mousemoveHandler = (e) => {
-    setPos({
-      x: e.clientX,
-      y: e.clientY,
-    })
-  }
-
-  useEffect(() => {
-    console.log('ComponentDidMount');
-    document.addEventListener('mousemove', mousemoveHandler);
-    return () => {
-      document.removeEventListener('mousemove', mousemoveHandler);
-    }
-  },[])
+    const [alert, setAlert] = useState(false);
+    const toggleAlert = () => setAlert(prev => !prev);
 
   return (
-    <div className="App">
-      <h1>Resources: {type}</h1>
-      <button onClick={() => setType('users')}>Users</button>
-      <button onClick={() => setType('todos')}>Todo</button>
-      <button onClick={() => setType('posts')}>Posts</button>
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
-      <pre>{JSON.stringify(pos, null, 2)}</pre>
-    </div>
+      <AlertContext.Provider value={alert}>
+        <div className="container pt-3">
+          <Alert/>
+          <Main toggle={toggleAlert}/>
+        </div>
+      </AlertContext.Provider>
   );
 }
 
